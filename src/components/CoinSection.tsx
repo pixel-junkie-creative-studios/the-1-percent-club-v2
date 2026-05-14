@@ -96,7 +96,7 @@ export default function CoinSection() {
 
           <div className="absolute top-12 left-12 pointer-events-none z-20">
             <p className="nav-item opacity-40 mb-3 tracking-[0.4em] font-bold uppercase text-[10px]">Institutional_Asset</p>
-            <h3 className="text-4xl font-black italic tracking-tighter text-white uppercase leading-none">$1X CRYPTO TOKEN</h3>
+            <h3 className="text-4xl font-black italic tracking-tighter text-white uppercase leading-none">$1XC CRYPTO TOKEN</h3>
           </div>
         </motion.div>
 
@@ -112,7 +112,7 @@ export default function CoinSection() {
               Surgical<br/>Tokenomics.
             </h2>
             <p className="text-2xl text-white/50 font-light leading-relaxed mb-16 max-w-2xl">
-              The $1X Token is the definitive unit of account within the ecosystem. It provides the 
+              The $1XC Token is the definitive unit of account within the ecosystem. It provides the 
               clinical hardware required for zero-friction cross-border settlements and institutional 
               liquidity provisioning.
             </p>
@@ -120,7 +120,7 @@ export default function CoinSection() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="glass p-10 rounded-[40px] border border-white/5">
                 <h4 className="text-accent font-mono text-[11px] mb-4 uppercase tracking-widest">Circulating Supply</h4>
-                <p className="text-4xl font-black italic tracking-tighter text-white">100,000,000 $1X</p>
+                <p className="text-4xl font-black italic tracking-tighter text-white">21,000,000 $1XC</p>
               </div>
               <div className="glass p-10 rounded-[40px] border border-white/5">
                 <h4 className="text-accent font-mono text-[11px] mb-4 uppercase tracking-widest">Deployment Speed</h4>
