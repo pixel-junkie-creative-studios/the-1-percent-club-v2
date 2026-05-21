@@ -129,7 +129,7 @@ export const siteConfig = {
     "titleTop": "Surgical",
     "titleBottom": "Tokenomics.",
     "description": "The $1XC Token is the definitive unit of account within the ecosystem. It provides the clinical hardware required for zero-friction cross-border settlements.",
-    "coinAsset": "/assets/coin_final.png",
+    "coinAsset": "/uploads/1779359236152_THE_1__CLUB_1xc_coin__500_x_500_px_.png",
     "stats": [
       {
         "label": "Circulating Supply",
