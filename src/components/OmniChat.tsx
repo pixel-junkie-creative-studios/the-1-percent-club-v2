@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send } from 'lucide-react';
+import { useBuilder } from '@/context/BuilderContext';
+import Editable from '@/components/Editable';
 
 export default function OmniChat() {
+  const { config } = useBuilder();
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -33,8 +36,14 @@ export default function OmniChat() {
               <X size={10} />
             </button>
             <p className="leading-relaxed">
-              <span className="text-accent font-black tracking-widest uppercase block mb-1">OMNI_LINK: ACTIVE</span> 
-              Venture engineering interface established. Awaiting technical inquiry.
+              <Editable path="bot.name">
+                <span className="text-accent font-black tracking-widest uppercase block mb-1">
+                  {config.bot?.name || "OMNI"}_LINK: ACTIVE
+                </span> 
+              </Editable>
+              <Editable path="bot.greeting">
+                {config.bot?.greeting || "Venture engineering interface established. Awaiting technical inquiry."}
+              </Editable>
             </p>
             <div className="absolute bottom-[-6px] right-8 w-3 h-3 bg-black rotate-45 border-b border-r border-white/10" />
           </motion.div>
@@ -56,7 +65,11 @@ export default function OmniChat() {
                    <div className="w-3 h-3 bg-accent rounded-full animate-ping absolute inset-0" />
                    <div className="w-3 h-3 bg-accent rounded-full relative z-10 shadow-[0_0_15px_#3b82f6]" />
                 </div>
-                <span className="font-mono text-xs font-black tracking-[0.4em] uppercase text-white">Omni Interface</span>
+                <Editable path="bot.name">
+                  <span className="font-mono text-xs font-black tracking-[0.4em] uppercase text-white">
+                    {config.bot?.name || "Omni"} Interface
+                  </span>
+                </Editable>
               </div>
               <button onClick={() => setIsOpen(false)} className="text-white/20 hover:text-white transition-colors">
                 <X size={24} />
@@ -66,22 +79,11 @@ export default function OmniChat() {
             <div className="flex-1 p-10 overflow-y-auto font-mono text-[11px] flex flex-col gap-8">
               <div className="bg-white/5 p-6 rounded-3xl border border-white/5 max-w-[90%]">
                 <p className="text-white/20 mb-4 text-[9px] uppercase tracking-[0.3em] font-bold">System Status: OPTIMAL</p>
-                <p className="leading-relaxed text-white/80">
-                  Welcome to the 1% Club execution layer. I am Omni, your technical interface. 
-                  Institutional Technical Layer v9.2.1 Active. Awaiting directives regarding asset transition, liquidity protocols, or card architecture.
-                </p>
-              </div>
-              
-              <div className="self-end bg-accent/20 p-5 rounded-3xl border border-accent/30 max-w-[80%]">
-                <p className="text-white font-bold">Requesting 1% Card specifications.</p>
-              </div>
-
-              <div className="bg-white/5 p-6 rounded-3xl border border-white/5 max-w-[90%]">
-                <p className="leading-relaxed text-white/80">
-                  The 1% Card is a hardware-secured liquidity node providing 0.5% exchange fees 
-                  and instant access to the ecosystem's internal digital assets. 
-                  Current protocol version: v4.6_EXECUTION.
-                </p>
+                <Editable path="bot.greeting">
+                  <p className="leading-relaxed text-white/80">
+                    {config.bot?.greeting || "Welcome to the 1% Club execution layer. I am Omni, your technical interface. Institutional Technical Layer v9.2.1 Active."}
+                  </p>
+                </Editable>
               </div>
             </div>
 
@@ -119,13 +121,15 @@ export default function OmniChat() {
           <X size={18} />
         ) : (
           <div className="relative w-full h-full p-0">
-            <img 
-              src="/assets/bot.gif" 
-              alt="OmniBot" 
-              className="w-full h-full object-cover relative z-10 brightness-[1.1] scale-100"
-            />
+            <Editable path="bot.asset" type="image" className="w-full h-full">
+              <img 
+                src={config.bot?.asset || "/assets/bot.gif"} 
+                alt="OmniBot" 
+                className="w-full h-full object-cover relative z-10 brightness-[1.1] scale-100"
+              />
+            </Editable>
             
-            {/* Glowing Eye Lens Effect - Positioned for the NEW BOT.gif */}
+            {/* Glowing Eye Lens Effect */}
             <motion.div
               animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -149,12 +153,6 @@ export default function OmniChat() {
                 }
               }}
               className="absolute top-[36%] right-[30%] w-1.5 h-1.5 bg-accent rounded-full z-20 shadow-[0_0_15px_#3b82f6]"
-            />
-            
-            <motion.div
-              animate={{ opacity: [0.1, 0.4, 0.1] }}
-              transition={{ duration: 4, repeat: Infinity }}
-              className="absolute inset-0 bg-accent/20 blur-xl rounded-full scale-110"
             />
           </div>
         )}

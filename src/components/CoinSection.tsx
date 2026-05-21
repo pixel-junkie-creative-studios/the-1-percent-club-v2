@@ -5,26 +5,26 @@ import { useRef, useState, useEffect, Suspense } from 'react';
 import { Float, useTexture, Preload } from '@react-three/drei';
 import * as THREE from 'three';
 import { useFrame, Canvas } from '@react-three/fiber';
+import { useBuilder } from '@/context/BuilderContext';
+import Editable from '@/components/Editable';
 
-function CoinMesh() {
-  const texture = useTexture('/assets/coin_final.png');
+function CoinMesh({ url }: { url: string }) {
+  const texture = useTexture(url || '/assets/coin_final.png');
   
   useEffect(() => {
     if (texture) {
-      // Maximize texture sharpness
       texture.anisotropy = 16;
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
       texture.flipY = false; 
       texture.needsUpdate = true;
     }
-  }, [texture]);
+  }, [texture, url]);
 
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    // ULTRA-SLOW ROTATION to prevent blur and ensure visibility
     groupRef.current.rotation.y = Math.sin(t * 0.15) * 0.2; 
     groupRef.current.rotation.x = Math.cos(t * 0.12) * 0.1;
     groupRef.current.rotation.z += 0.0015; 
@@ -32,9 +32,7 @@ function CoinMesh() {
 
   return (
     <Float speed={0.5} rotationIntensity={0.1} floatIntensity={0.1}>
-      {/* Reduced size by ~15% (from 1.6 to 1.35) as requested */}
       <group ref={groupRef} scale={1.35}>
-        {/* Front Face */}
         <mesh position={[0, 0, 0.1]}>
           <circleGeometry args={[3.4, 64]} />
           <meshBasicMaterial 
@@ -43,8 +41,6 @@ function CoinMesh() {
             side={THREE.DoubleSide}
           />
         </mesh>
-        
-        {/* Back Face */}
         <mesh position={[0, 0, -0.1]} rotation={[0, Math.PI, 0]}>
           <circleGeometry args={[3.4, 64]} />
           <meshBasicMaterial 
@@ -53,8 +49,6 @@ function CoinMesh() {
             side={THREE.DoubleSide}
           />
         </mesh>
-
-        {/* Side Body */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[3.4, 3.4, 0.2, 64]} />
           <meshBasicMaterial color="#000000" />
@@ -65,6 +59,7 @@ function CoinMesh() {
 }
 
 export default function CoinSection() {
+  const { config } = useBuilder();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -83,16 +78,18 @@ export default function CoinSection() {
         >
           <div className="absolute inset-0 bg-accent/5 blur-[20px] rounded-full opacity-10 pointer-events-none" />
           
-          {isMounted && (
-            <div className="w-full h-full relative z-10">
-              <Canvas camera={{ position: [0, 0, 10], fov: 45 }} dpr={[1, 2]}>
-                <Suspense fallback={null}>
-                  <CoinMesh />
-                  <Preload all />
-                </Suspense>
-              </Canvas>
-            </div>
-          )}
+          <Editable path="tokenomics.coinAsset" type="image" className="w-full h-full">
+            {isMounted && (
+              <div className="w-full h-full relative z-10">
+                <Canvas camera={{ position: [0, 0, 10], fov: 45 }} dpr={[1, 2]}>
+                  <Suspense fallback={null}>
+                    <CoinMesh url={config.tokenomics?.coinAsset || '/assets/coin_final.png'} />
+                    <Preload all />
+                  </Suspense>
+                </Canvas>
+              </div>
+            )}
+          </Editable>
 
           <div className="absolute top-12 left-12 pointer-events-none z-20">
             <p className="nav-item opacity-40 mb-3 tracking-[0.4em] font-bold uppercase text-[10px]">Institutional_Asset</p>
@@ -107,25 +104,35 @@ export default function CoinSection() {
             transition={{ duration: 1 }}
             viewport={{ once: true }}
           >
-            <p className="nav-item text-accent mb-6 tracking-[0.6em] font-bold uppercase">// LIQUIDITY INFRASTRUCTURE</p>
+            <Editable path="tokenomics.badge">
+              <p className="nav-item text-accent mb-6 tracking-[0.6em] font-bold uppercase">
+                {config.tokenomics?.badge || "// LIQUIDITY INFRASTRUCTURE"}
+              </p>
+            </Editable>
+            
             <h2 className="text-5xl md:text-8xl font-black tracking-tighter mb-12 leading-[1] text-white">
-              Surgical<br/>Tokenomics.
+              <Editable path="tokenomics.titleTop">Surgical</Editable>
+              <br/>
+              <Editable path="tokenomics.titleBottom">Tokenomics.</Editable>
             </h2>
-            <p className="text-2xl text-white/50 font-light leading-relaxed mb-16 max-w-2xl">
-              The $1XC Token is the definitive unit of account within the ecosystem. It provides the 
-              clinical hardware required for zero-friction cross-border settlements and institutional 
-              liquidity provisioning.
-            </p>
+
+            <Editable path="tokenomics.description">
+              <p className="text-2xl text-white/50 font-light leading-relaxed mb-16 max-w-2xl">
+                {config.tokenomics?.description || "The $1XC Token is the definitive unit of account within the ecosystem. It provides the clinical hardware required for zero-friction cross-border settlements and institutional liquidity provisioning."}
+              </p>
+            </Editable>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="glass p-10 rounded-[40px] border border-white/5">
-                <h4 className="text-accent font-mono text-[11px] mb-4 uppercase tracking-widest">Circulating Supply</h4>
-                <p className="text-4xl font-black italic tracking-tighter text-white">21,000,000 $1XC</p>
-              </div>
-              <div className="glass p-10 rounded-[40px] border border-white/5">
-                <h4 className="text-accent font-mono text-[11px] mb-4 uppercase tracking-widest">Deployment Speed</h4>
-                <p className="text-4xl font-black italic tracking-tighter text-white">INSTANT</p>
-              </div>
+              {config.tokenomics?.stats?.map((stat: any, i: number) => (
+                <div key={i} className="glass p-10 rounded-[40px] border border-white/5">
+                  <Editable path={`tokenomics.stats.${i}.label`}>
+                    <h4 className="text-accent font-mono text-[11px] mb-4 uppercase tracking-widest">{stat.label}</h4>
+                  </Editable>
+                  <Editable path={`tokenomics.stats.${i}.value`}>
+                    <p className="text-4xl font-black italic tracking-tighter text-white">{stat.value}</p>
+                  </Editable>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
